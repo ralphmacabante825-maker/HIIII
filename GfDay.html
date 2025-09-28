@@ -1,0 +1,215 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>For You 💖</title>
+  <style>
+    *{margin:0;padding:0;box-sizing:border-box}
+    body,html{height:100%;font-family:'Poppins',sans-serif;color:#fff;overflow-x:hidden;
+      background:radial-gradient(ellipse at bottom,#2e004f 0%,#0d001a 100%);}
+
+    /* starry */
+    .star{position:absolute;color:#ff99cc;animation:twinkle 2s infinite alternate;opacity:0.85}
+    @keyframes twinkle{from{opacity:0.3;text-shadow:0 0 2px #ff66b2}to{opacity:1;text-shadow:0 0 8px #ff66b2,0 0 12px #ffccff}}
+    .shooting-star{position:absolute;width:2px;height:80px;background:linear-gradient(-45deg,#ff99cc,transparent);animation:shoot 3s linear;opacity:0.7}
+    @keyframes shoot{0%{transform:translateX(0) translateY(0) rotate(-45deg);opacity:1}100%{transform:translateX(-300px) translateY(300px) rotate(-45deg);opacity:0}}
+
+    /* password screen */
+    #passwordScreen{position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(10,0,30,0.95);
+      display:flex;flex-direction:column;justify-content:center;align-items:center;z-index:1000;padding:20px;text-align:center}
+    #passwordScreen h1{margin-bottom:15px;font-size:1.8rem}
+    #passwordInput{padding:12px;font-size:1.1rem;border-radius:10px;border:2px solid #ff66b2;background:#1a0026;color:#fff;text-align:center;outline:none}
+    #submitPassword{margin-top:15px;padding:10px 20px;font-size:1rem;border-radius:10px;border:none;background:#ff66b2;color:#fff;cursor:pointer;box-shadow:0 0 10px #ff99cc}
+    #hint{margin-top:10px;font-size:0.9rem;color:#aaa}
+
+    /* main */
+    #mainContent{display:none;padding:20px;animation:fadeIn 1.5s ease-in-out forwards;position:relative;z-index:2}
+    @keyframes fadeIn{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:translateY(0)}}
+    h1,h2{text-align:center;margin:20px 0;text-shadow:0 0 10px #ff66b2}
+
+    /* hearts tap */
+    @keyframes floatUp{0%{transform:translateY(0);opacity:1}100%{transform:translateY(-80px);opacity:0}}
+
+    /* typewriter */
+    #typewriter{max-width:600px;margin:20px auto;text-align:center;font-size:1.1rem;line-height:1.8;white-space:pre-wrap;text-shadow:0 0 8px #ff99cc}
+
+    /* pictures - centered & responsive */
+    .pictures{margin-top:40px;display:flex;justify-content:center;align-items:center;flex-wrap:wrap;gap:20px;padding:10px}
+    .pictures img{width:250px;height:auto;object-fit:cover;border-radius:20px;border:4px solid #ff66b2;box-shadow:0 0 20px #ff99cc;transition:transform .3s}
+    .pictures img:hover{transform:scale(1.05) rotate(-2deg)}
+
+    /* fade-in utility */
+    .fade-in{opacity:0;transform:translateY(20px);transition:opacity 1s,transform 1s}
+    .fade-in.visible{opacity:1;transform:translateY(0)}
+  </style>
+</head>
+<body>
+
+  <!-- decorative layers -->
+  <div id="stars"></div>
+  <div id="shootingStars"></div>
+
+  <!-- password -->
+  <div id="passwordScreen">
+    <h1>💖 Enter Password 💖</h1>
+    <input id="passwordInput" type="password" placeholder="Password" />
+    <button id="submitPassword">Unlock</button>
+    <p id="hint">Hint: Guess mo muna yung password:p(Something close to you especially in Iloilo rn) 💕</p>
+  </div>
+
+  <!-- music element (no autoplay attribute) -->
+  <audio id="bgMusic" loop>
+    <source src="P.mp3" type="audio/mp3" />
+  </audio>
+
+  <!-- main content (hidden until unlock) -->
+  <main id="mainContent" aria-live="polite">
+    <h1 class="fade-in">✨ For You ✨</h1>
+
+    <h2 class="fade-in">I Love You 💌</h2>
+    <div id="typewriter" class="fade-in"></div>
+
+    <h2 class="fade-in">Katorpehan Ko The Whole Year 📸</h2>
+    <div class="pictures fade-in">
+      <img src="g1.jpg" alt="Picture 1" />
+      <img src="g2.jpg" alt="Picture 2" />
+      <img src="g3.jpg" alt="Picture 3" />
+    </div>
+  </main>
+
+  <script>
+    // ---------- star generation (lightweight)
+    function createStars(count = 60) {
+      const container = document.getElementById('stars');
+      for (let s = 0; s < count; s++) {
+        const star = document.createElement('div');
+        star.className = 'star';
+        star.textContent = '♥';
+        star.style.left = Math.random() * 100 + 'vw';
+        star.style.top = Math.random() * 100 + 'vh';
+        star.style.fontSize = (Math.random() * 12 + 8) + 'px';
+        star.style.animationDuration = (1.5 + Math.random() * 3) + 's';
+        container.appendChild(star);
+      }
+    }
+
+    function createShootingStarOnce() {
+      const c = document.getElementById('shootingStars');
+      const s = document.createElement('div');
+      s.className = 'shooting-star';
+      s.style.left = Math.random() * 100 + 'vw';
+      s.style.top = Math.random() * 50 + 'vh';
+      s.style.animationDuration = (3 + Math.random() * 2) + 's';
+      c.appendChild(s);
+      setTimeout(()=>s.remove(), 3500);
+    }
+
+    // run once DOM ready
+    document.addEventListener('DOMContentLoaded', () => {
+      createStars(60);
+      // create an initial burst
+      for (let i=0;i<3;i++) setTimeout(createShootingStarOnce, i*700);
+      // then periodic shooting stars
+      setInterval(createShootingStarOnce, 2200);
+    });
+
+    // ---------- password unlock behaviour
+    const submitBtn = document.getElementById('submitPassword');
+    const passwordScreen = document.getElementById('passwordScreen');
+    const mainContent = document.getElementById('mainContent');
+    const bgMusic = document.getElementById('bgMusic');
+
+    // change this to your password
+    const correctPassword = "Pochi";
+
+    submitBtn.addEventListener('click', () => {
+      const val = document.getElementById('passwordInput').value;
+      if (val === correctPassword) {
+        // hide entrance
+        passwordScreen.style.display = 'none';
+        // reveal main
+        mainContent.style.display = 'block';
+
+        // reveal any fade-in elements inside main immediately
+        setTimeout(()=> {
+          document.querySelectorAll('#mainContent .fade-in').forEach(el => el.classList.add('visible'));
+        }, 50);
+
+        // start audio (this is triggered by user click, so browsers allow play)
+        bgMusic.play().catch(()=>{/* ignore play errors */});
+
+        // start typing message
+        startTyping();
+      } else {
+        // nicer inline feedback instead of alert
+        const hint = document.getElementById('hint');
+        hint.textContent = 'Wrong password 💔 — try again';
+        hint.style.color = '#ff9ab8';
+        // keep the message, optionally animate input
+        const input = document.getElementById('passwordInput');
+        input.classList.add('shake');
+        setTimeout(()=> {
+          input.classList.remove('shake');
+          hint.textContent = 'Hint: Pinag Seselosan Ko Palagi Na Katabi Mo Sa Kama 💕';
+          hint.style.color = '#aaa';
+        }, 900);
+      }
+    });
+
+    // ---------- floating hearts on tap (only after unlock)
+    document.addEventListener('click', (e) => {
+      // don't create hearts while password screen visible or if user clicked the unlock button
+      if (document.getElementById('passwordScreen').style.display !== 'none') return;
+      if (e.target && e.target.id === 'submitPassword') return;
+
+      const heart = document.createElement('div');
+      heart.textContent = '💖';
+      heart.style.position = 'absolute';
+      // center heart visually (offset by half font size)
+      const x = e.pageX - 12;
+      const y = e.pageY - 12;
+      heart.style.left = x + 'px';
+      heart.style.top = y + 'px';
+      heart.style.fontSize = '28px';
+      heart.style.pointerEvents = 'none';
+      heart.style.transform = 'translateY(0)';
+      heart.style.transition = 'transform 2s ease-out, opacity 2s ease-out';
+      document.body.appendChild(heart);
+
+      // animate (JS-based so it's smooth)
+      requestAnimationFrame(()=> {
+        heart.style.transform = 'translateY(-80px)';
+        heart.style.opacity = '0';
+      });
+      setTimeout(()=> heart.remove(), 2000);
+    });
+
+    // ---------- scroll-trigger reveal (keeps working for later elements)
+    const fadeEls = () => Array.from(document.querySelectorAll('.fade-in'));
+    window.addEventListener('scroll', () => {
+      fadeEls().forEach(el => {
+        const rect = el.getBoundingClientRect();
+        if (rect.top < window.innerHeight - 100) el.classList.add('visible');
+      });
+    });
+
+    // ---------- typewriter
+    const message = `You make my world brighter every day. I love every moment with you and I'm so lucky to have you in my life. HAHAHHA just imagine po like I was the very same guy that was your best friend, but then unexpectedly fell in love with you. And the very same guy that was very torpe and didn't know what to do or how to act around you, HAHAHHA. It was a constant battle on how should I approach you, but I just couldn't superrr torpeeee HAHAHHAHA. Anyways I just wanted to say that those efforts paid off. Now I never knew I'd be able to make something for you for this day. WAAAA, well I won't be able to post it publicly, but I think it's enough that you're the only one that knows. I love you and I'll always cherish you deeply, and would care for you. I'm happy that you're my girlfriend, and I'll never stop showing you how much I appreciate you for being in my life. I'm just so lucky to have you. I'll never stop pursuing you, I'll make you happy and I hope we'll be together one day thinking back of all the hardships that we've went through together. And let this song be a message to you that I'll always love you and nothing would change from me, I'll forever hold you dear in my heart, I'm here for you, I love you po`;
+    let _idx = 0;
+    function typeWriter() {
+      if (_idx < message.length) {
+        const ch = message.charAt(_idx);
+        document.getElementById('typewriter').innerHTML += (ch === '\n' ? '<br>' : ch);
+        _idx++;
+        setTimeout(typeWriter, 45);
+      }
+    }
+    function startTyping() {
+      document.getElementById('typewriter').innerHTML = '';
+      _idx = 0;
+      typeWriter();
+    }
+  </script>
+</body>
+</html>
